@@ -58,7 +58,7 @@ docker exec -it trtllm_bench /bin/bash
 ```
 - Build and launch
 ```bash
-# You will need to tweak this as you see fit
+# You will need to tweak this for the scenario you want
 bash scripts/benchmark.sh $CONFIG_PATH
 ```
 
