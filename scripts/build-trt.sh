@@ -10,6 +10,7 @@ build_trt_engine() {
   model_tp_size=$(cat $config | jq -r '.tp')
   max_batch_size=$(cat $config | jq -r '.max_batch_size')
   max_num_tokens=$(cat $config | jq -r '.max_num_tokens')
+  max_seq_len=$(cat $config | jq -r '.max_seq_len')
 
   echo "model_path=$model_path"
   echo "model_name=$model_name"
@@ -18,6 +19,7 @@ build_trt_engine() {
   echo "model_tp_size=$model_tp_size"
   echo "max_batch_size=$max_batch_size"
   echo "max_num_tokens=$max_num_tokens"
+  echo "max_seq_len=$max_seq_len"
 
   # create model caching directory
   cd ${HOME}
@@ -48,6 +50,7 @@ build_trt_engine() {
     --gemm_plugin ${model_dtype} \
     --max_batch_size ${max_batch_size} \
     --max_num_tokens ${max_num_tokens} \
+    --max_seq_len ${max_seq_len} \
     --output_dir ${trt_engine_path} \
     --kv_cache_type paged \
     --use_paged_context_fmha enable \
