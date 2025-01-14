@@ -1,0 +1,8 @@
+{
+    "model": "/models/llama-8b",
+    "tp": 1,
+    "model_type": "llama",
+    "model_dtype": "bfloat16",
+    "max_batch_size": 2048,
+    "max_num_tokens": 8192
+}
