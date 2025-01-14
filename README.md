@@ -33,17 +33,30 @@ docker run --shm-size=2g \-it -d --ulimit memlock=-1 --ulimit stack=67108864 --r
     --name trtllm_bench trtllm_bench:latest
 ```
 
-### Enter the docker shell
+### Build and Launch TRT Engine
 
+- Enter shell
 ```bash
 docker exec -it trtllm_bench /bin/bash
 ```
-
-### Build and Launch TRT Engine
-
+- Build and launch
 ```bash
 CONFIG_PATH=scripts/llama-8b.json
 
 bash scripts/build-trt.sh $CONFIG_PATH
 bash scripts/launch-trt.sh $CONFIG_PATH
 ```
+
+### Benchmark
+
+- Enter shell
+```bash
+docker exec -it trtllm_bench /bin/bash
+```
+- Build and launch
+```bash
+# You will need to tweak this as you see fit
+bash scripts/benchmark.sh $CONFIG_PATH
+```
+
+
