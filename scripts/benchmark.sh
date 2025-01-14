@@ -10,10 +10,10 @@ do
     echo "===== RUNNING $MODEL FOR $NUM_PROMPTS PROMPTS WITH $REQUEST_RATE QPS ====="
     echo ""
 
-    python3 benchmark_serving.py \
+    python3 benchmarks/benchmark_serving.py \
         --model $MODEL \
         --dataset-name sharegpt \
-        --dataset-path ShareGPT_V3_unfiltered_cleaned_split.json \
+        --dataset-path benchmarks/ShareGPT_V3_unfiltered_cleaned_split.json \
         --ignore-eos \
         --num-prompts $NUM_PROMPTS \
         --request-rate $REQUEST_RATE \
