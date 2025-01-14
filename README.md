@@ -47,6 +47,9 @@ bash scripts/build-trt.sh $CONFIG_PATH
 bash scripts/launch-trt.sh $CONFIG_PATH
 ```
 
+- See https://www.bentoml.com/blog/tuning-tensor-rt-llm-for-optimal-serving-with-bentoml
+- See https://github.com/NVIDIA/TensorRT-LLM/blob/v0.14.0/docs/source/performance/perf-best-practices.md
+
 ### Benchmark
 
 - Enter shell
