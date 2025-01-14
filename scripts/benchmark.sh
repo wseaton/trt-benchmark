@@ -1,5 +1,5 @@
-MODEL=/models/llama-8b
-REQUEST_RATES=(1 10 20 30 40 45 50 55)
+MODEL=/models/llama-70b
+REQUEST_RATES=(25 30 35)
 TOTAL_SECONDS=120
 
 for REQUEST_RATE in "${REQUEST_RATES[@]}";
@@ -10,15 +10,27 @@ do
     echo "===== RUNNING $MODEL FOR $NUM_PROMPTS PROMPTS WITH $REQUEST_RATE QPS ====="
     echo ""
 
-    python3 benchmarks/benchmark_serving.py \
+    python3 vllm/benchmarks/benchmark_serving.py \
         --model $MODEL \
         --dataset-name sharegpt \
-        --dataset-path benchmarks/ShareGPT_V3_unfiltered_cleaned_split.json \
+        --dataset-path vllm/benchmarks/ShareGPT_V3_unfiltered_cleaned_split.json \
         --ignore-eos \
         --num-prompts $NUM_PROMPTS \
         --request-rate $REQUEST_RATE \
         --backend tensorrt-llm \
         --endpoint /v2/models/ensemble/generate_stream
+
+    # python3 vllm/benchmarks/benchmark_serving.py \
+    #     --model $MODEL \
+    #     --dataset-name sonnet \
+    #     --dataset-path vllm/benchmarks/sonnet_4x.txt \
+    #     --sonnet-input-len 1200 \
+    #     --sonnet-output-len 128 \
+    #     --ignore-eos \
+    #     --num-prompts $NUM_PROMPTS \
+    #     --request-rate $REQUEST_RATE \
+    #     --backend tensorrt-llm \
+    #     --endpoint /v2/models/ensemble/generate_stream
 
 done
 
