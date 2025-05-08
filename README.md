@@ -46,7 +46,7 @@ podman exec -it trtllm_bench /bin/bash
 
 ```bash
 CONFIG_PATH=scripts/llama-70b.json
-#bash scripts/build-trt.sh $CONFIG_PATH # rebuilt every time the container is restarted :(
+bash scripts/build-trt.sh $CONFIG_PATH # rebuilt every time the container is restarted :(
 bash scripts/launch-trt.sh $CONFIG_PATH
 ```
 
@@ -60,6 +60,26 @@ bash scripts/launch-trt.sh $CONFIG_PATH
 docker exec -it trtllm_bench /bin/bash
 ```
 - Build and launch
+
+
+Deps
+
+```sh
+ curl -LsSf https://astral.sh/uv/install.sh | sh
+ source $HOME/.local/bin/env
+ uv venv vllm-env
+ source vllm-env/bin/activate
+ uv pip install vllm pandas datasets
+```
+
+Download dataset 
+
+```
+cd vllm/benchmarks/
+wget https://huggingface.co/datasets/anon8231489123/ShareGPT_Vicuna_unfiltered/resolve/main/ShareGPT_V3_unfiltered_cleaned_split.json
+cd $HOME
+```
+
 ```bash
 # You will need to tweak this for the scenario you want
 bash scripts/benchmark.sh $CONFIG_PATH
@@ -73,9 +93,10 @@ bash scripts/benchmark.sh $CONFIG_PATH
 
 ### debug
 
-
+```
 podman run --rm -it --security-opt=label=disable  \
   --device nvidia.com/gpu=0 --device nvidia.com/gpu=1 \
   --device nvidia.com/gpu=2 --device nvidia.com/gpu=3 \
   --shm-size=2g   --ulimit memlock=-1   --ulimit stack=67108864   \
   nvcr.io/nvidia/tritonserver:25.03-trtllm-python-py3 nvidia-smi
+```
