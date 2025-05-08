@@ -5,19 +5,16 @@ FROM nvcr.io/nvidia/tritonserver:${TRT_VERSION}-trtllm-python-py3 AS base
 RUN apt-get update -y \
     && apt-get install -y ccache curl wget jq sudo
 
-USER 1001
-
-RUN pip3 install -U transformers
 
 # Set the workdir and copy necessary folders to run benchmarks
 WORKDIR /workspace
 
-# Switch to the custom user
-USER 1001
+RUN pip3 install -U transformers
 
 RUN git clone https://github.com/triton-inference-server/tensorrtllm_backend.git && \ 
   git lfs install && \
   cd tensorrtllm_backend && \
   git checkout v0.18.2 && \
   git submodule update --init --recursive
+
 
