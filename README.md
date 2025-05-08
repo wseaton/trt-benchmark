@@ -23,27 +23,30 @@ docker build -t trtllm_bench -f Dockerfile.trtllm --build-arg UID=$(id -u) --bui
 ### Run the docker image
 
 ```bash
-GPUS='"device=0"'
-GPUS='"device=0,1,2,3"'
 git clone https://github.com/vllm-project/vllm.git
-docker run --shm-size=2g \-it -d --ulimit memlock=-1 --ulimit stack=67108864 --runtime=nvidia --gpus $GPUS -e HF_TOKEN=$HF_TOKEN \
-    -v $(pwd)/models:/models \
-    -v $(pwd)/scripts:/home/docker-user/scripts \
-    -v $(pwd)/vllm/benchmarks:/home/docker-user/benchmarks \
-    --name trtllm_bench trtllm_bench:latest
-```
+# must be run from the directory you want these volume mounts mounted to! be warned!
+podman run --rm -it -d  --security-opt=label=disable  \
+  --device nvidia.com/gpu=0 --device nvidia.com/gpu=1 \
+  --device nvidia.com/gpu=2 --device nvidia.com/gpu=3 --ulimit nproc=65535 \
+  --shm-size=2g   --ulimit memlock=-1   --ulimit stack=67108864   \
+  -e HF_TOKEN=$HF_TOKEN   -v $(pwd)/models:/models:Z   -v $(pwd)/scripts:/home/docker-user/scripts:Z   \
+  --name trtllm_bench -v $(pwd)/vllm/benchmarks:/home/docker-user/benchmarks:Z   nvcr.io/nvidia/tritonserver:25.03-trtllm-python-py3
 
+```
 ### Build and Launch TRT Engine
 
 - Enter shell
 ```bash
-docker exec -it trtllm_bench /bin/bash
+podman exec -it trtllm_bench /bin/bash
 ```
 - Build and launch
-```bash
-CONFIG_PATH=scripts/llama-8b.json
 
-bash scripts/build-trt.sh $CONFIG_PATH
+1) Ensure HOME is set properly, in our case it's: `export HOME=/home/docker-user`
+2) Ensure that `tensorrtllm_backend` is cloned in the `${HOME}` directory, this will not persist across a container restart, so be careful.
+
+```bash
+CONFIG_PATH=scripts/llama-70b.json
+#bash scripts/build-trt.sh $CONFIG_PATH # rebuilt every time the container is restarted :(
 bash scripts/launch-trt.sh $CONFIG_PATH
 ```
 
@@ -63,3 +66,16 @@ bash scripts/benchmark.sh $CONFIG_PATH
 ```
 
 
+
+
+
+
+
+### debug
+
+
+podman run --rm -it --security-opt=label=disable  \
+  --device nvidia.com/gpu=0 --device nvidia.com/gpu=1 \
+  --device nvidia.com/gpu=2 --device nvidia.com/gpu=3 \
+  --shm-size=2g   --ulimit memlock=-1   --ulimit stack=67108864   \
+  nvcr.io/nvidia/tritonserver:25.03-trtllm-python-py3 nvidia-smi
