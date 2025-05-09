@@ -87,11 +87,40 @@ bash scripts/benchmark.sh $CONFIG_PATH
 
 
 
+### Running the VLLM benchmark inside the serving container
 
+```sh
+  podman run --rm -it --entrypoint /bin/sh  --security-opt=label=disable  -v $(pwd)/models:/models:Z -v $(pwd)/scripts:/scripts:Z  -v $(pwd)/vllm:/vllm:Z --device nvidia.com/gpu=4  --device nvidia.com/gpu=5   --device nvidia.com/gpu=6   --device nvidia.com/gpu=7 -e HF_HUB_OFFLINE=1  --name vllm-serve -p 8000:8000/tcp  quay.io/vllm/vllm:0.8.5.0_cu128 -c 'vllm serve "/models/llama-70b" --gpu-memory-utilization=0.9 --tensor-parallel-size=4'
+```
 
+Then exec into it (get the container name from `podman ps`, or optionally set it via `--name` flag like above)
 
+```sh
+podman exec -it {container_name} /bin/bash
+```
 
-### debug
+In the conatiner shell:
+
+```sh
+uv venv benchmark-env
+source benchmark-env/bin/activate
+uv pip install vllm pandas datasets numpy
+```
+
+Run the  mounted [scripts/benchmark_vllm.sh](scripts/benchmark_vllm.sh) script, which uses vllm that is git cloned and mounted into the container (the pip installed version doesn't ship the benchmark harness), and the environment in the upstream `vllm` image is unfortunately immutable.
+
+```
+bash /scripts/benchmark_vllm.sh
+```
+
+Copy the output files out (we are using `/models` to smuggle them):
+```
+(benchmark-env) [vllm@de343a58d211 ~]$ ls
+benchmark-env  results_vllm_25s.json  results_vllm_30s.json  results_vllm_35s.json
+(benchmark-env) [vllm@de343a58d211 ~]$ mv results_vllm*.json /models/
+```
+
+#### debug `nvidia-smi`
 
 ```
 podman run --rm -it --security-opt=label=disable  \
