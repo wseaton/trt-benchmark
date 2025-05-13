@@ -53,7 +53,7 @@ python3 tools/fill_template.py -i triton_model_repo/postprocessing/config.pbtxt 
 
 python3 tools/fill_template.py -i triton_model_repo/ensemble/config.pbtxt "triton_max_batch_size:${max_batch_size},logits_datatype:${logits_datatype}"
 
-python3 tools/fill_template.py -i triton_model_repo/tensorrt_llm_bls/config.pbtxt "triton_max_batch_size:${max_batch_size},decoupled_mode:true,accumulate_tokens:false,bls_instance_count:1,enable_chunked_context:true,logits_datatype:${logits_datatype},tensorrt_llm_model_name:tensorrt_llm"
+python3 tools/fill_template.py -i triton_model_repo/tensorrt_llm_bls/config.pbtxt "triton_max_batch_size:${max_batch_size},decoupled_mode:true,accumulate_tokens:false,bls_instance_count:1,logits_datatype:${logits_datatype},tensorrt_llm_model_name:tensorrt_llm"
 
 # Launch Triton Server
 python3 scripts/launch_triton_server.py \
