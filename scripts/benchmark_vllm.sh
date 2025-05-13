@@ -1,6 +1,6 @@
 #!/bin/bash
 MODEL=/models/llama-70b
-REQUEST_RATES=(25 30 35)
+REQUEST_RATES=(1 10 25 30 35)
 TOTAL_SECONDS=120
 
 for REQUEST_RATE in "${REQUEST_RATES[@]}";
